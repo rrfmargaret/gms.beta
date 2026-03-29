@@ -1791,39 +1791,48 @@ function captureOCR() {
   closeOCR();
 }
 
-// ---- GOOGLE SHEETS INTEGRATION ----
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbz_iePiuWHa3O5-cAZm-9zya9rCMlqGaz4mXaT2wLm4GJZfPRWb5vgDxx04L9DRmJDg/exec';
+// ---- GOOGLE SHEETS INTEGRATION (v2 — FIXED) ----
+// ⚠️  Paste your Web App deployment URL here after deploying Code.gs
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbylJ_CmFq_mqs-pUEJKGpxiLeQGxd_cNY-65vGfawILSPRJQf5LADR2RvsdSCLLGxkW/exec';
 
-// Returns true on success, false on failure.
+// FIX: Use GET instead of POST + no-cors.
+// no-cors makes the response opaque — the browser can NEVER read it,
+// so we can never confirm success or catch errors.
+// GET requests to Apps Script are fully CORS-readable without extra config.
+// We pass the full entry as ?action=addEntry&payload=<JSON>.
 async function sendToGoogleSheets(entry) {
-  if (!SHEET_URL) {
-    document.getElementById('sync-status').textContent = 'Saved locally (no server)';
-    return true;
+  if (!SHEET_URL || SHEET_URL.startsWith('PASTE_')) {
+    console.warn('SHEET_URL not set — skipping sync');
+    document.getElementById('sync-status').textContent = 'URL not configured';
+    return false;
   }
+
   document.getElementById('sync-status').textContent = 'Syncing...';
   try {
-    const res  = await fetch(SHEET_URL, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ action: 'addEntry', data: entry })
-    });
+    const payload = encodeURIComponent(JSON.stringify(entry));
+    const url     = `${SHEET_URL}?action=addEntry&payload=${payload}`;
+    const res     = await fetch(url);
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
     const json = await res.json();
+
     if (json.status === 'ok') {
       document.getElementById('sync-status').textContent = 'Synced ✓';
       setTimeout(() => document.getElementById('sync-status').textContent = 'Ready', 3000);
       return true;
     } else {
-      document.getElementById('sync-status').textContent = 'Sync error: ' + (json.message || 'unknown');
-      return false;
+      throw new Error(json.message || 'Unknown server error');
     }
-  } catch (e) {
-    document.getElementById('sync-status').textContent = 'Offline — saved locally';
+  } catch (err) {
+    console.error('Sheets sync failed:', err);
+    document.getElementById('sync-status').textContent = 'Sync failed — saved locally';
     return false;
   }
 }
 
 async function pingServer() {
-  if (!SHEET_URL) return;
+  if (!SHEET_URL || SHEET_URL.startsWith('PASTE_')) return;
   try {
     const res  = await fetch(SHEET_URL + '?action=ping');
     const json = await res.json();
