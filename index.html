@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Gate Access Portal | P&G</title>
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <style>
+    :root {
+      --pg-blue: #003da5;
+      --pg-light-blue: #00a3e0;
+      --pg-yellow: #fedb00;
+      --bg: #f2f4f8;
+      --surface: #ffffff;
+      --text: #111;
+      --muted: #666;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .logo-area {
+      margin-bottom: 40px;
+    }
+    
+    .logo-area svg {
+      width: 80px;
+      height: auto;
+      color: var(--pg-blue);
+      margin-bottom: 16px;
+    }
+
+    .title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--pg-blue);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 48px;
+      font-weight: 500;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 24px;
+      padding: 40px 24px;
+      box-shadow: 0 10px 40px rgba(0, 61, 165, 0.08);
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 2px solid transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(0, 61, 165, 0.12);
+    }
+
+    .card.entry:hover {
+      border-color: var(--pg-light-blue);
+      background: linear-gradient(to bottom, #ffffff, #f0faff);
+    }
+
+    .card.exit:hover {
+      border-color: var(--pg-yellow);
+      background: linear-gradient(to bottom, #ffffff, #fffdf0);
+    }
+
+    .card-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .card.entry .card-icon {
+      background: rgba(0, 163, 224, 0.1);
+      color: var(--pg-light-blue);
+    }
+
+    .card.exit .card-icon {
+      background: rgba(254, 219, 0, 0.2);
+      color: #ccb000;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .footer {
+      margin-top: 60px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      body { background: #111; color: #fff; }
+      .title { color: #fff; }
+      .card { background: #1c1c1e; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+      .card.entry:hover { background: #1c1c1e; border-color: var(--pg-light-blue); }
+      .card.exit:hover { background: #1c1c1e; border-color: var(--pg-yellow); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-area">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+        <path d="M2 17l10 5 10-5"></path>
+        <path d="M2 12l10 5 10-5"></path>
+      </svg>
+      <h1 class="title">Gate Access Portal</h1>
+      <p class="subtitle">Select your operating terminal</p>
+    </div>
+
+    <div class="grid">
+      <a href="/entry" class="card entry">
+        <div class="card-icon">
+          <span class="material-symbols-outlined" style="font-size: 32px">login</span>
+        </div>
+        <div class="card-title">POST 7 (Entry)</div>
+        <div class="card-desc">Log arriving vehicles, specify shipment details, and calculate cargo destinations.</div>
+      </a>
+
+      <a href="/exit" class="card exit">
+        <div class="card-icon">
+          <span class="material-symbols-outlined" style="font-size: 32px">logout</span>
+        </div>
+        <div class="card-title">POST 1 (Exit)</div>
+        <div class="card-desc">Track departing vehicles, search active cache, calculate time duration, and bulk checkouts.</div>
+      </a>
+    </div>
+
+    <div class="footer">
+      &copy; 2026 rrfmargaret. Powered by Vercel & Google Apps Script.
+    </div>
+  </div>
+  
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+    }
+  </script>
+</body>
+</html>

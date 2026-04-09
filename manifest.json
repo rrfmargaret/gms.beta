@@ -1,0 +1,21 @@
+{
+  "name": "Gate Access System",
+  "short_name": "Gate Access",
+  "description": "Vehicle Gate Access Control System.",
+  "start_url": "./post1-exit.html",
+  "display": "standalone",
+  "background_color": "#003da5",
+  "theme_color": "#003da5",
+  "icons": [
+    {
+      "src": "https://www.google.com/s2/favicons?domain=pg.com&sz=192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://www.google.com/s2/favicons?domain=pg.com&sz=512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

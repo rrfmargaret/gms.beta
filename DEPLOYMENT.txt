@@ -1,0 +1,182 @@
+# GATE IN/OUT SYSTEM — DEPLOYMENT GUIDE
+# =======================================
+# Follow these steps in order to go live.
+# Estimated time: 15–20 minutes.
+
+
+## STEP 1 — Create the Google Sheet
+─────────────────────────────────────
+1. Go to: https://sheets.google.com
+2. Click "+ Blank" to create a new spreadsheet
+3. Name it: "Gate In/Out Log"
+4. Copy the Sheet ID from the URL:
+   https://docs.google.com/spreadsheets/d/ >>>COPY_THIS_PART<<< /edit
+5. Save this ID — you will need it in Step 2.
+
+
+## STEP 2 — Set Up Apps Script
+──────────────────────────────
+1. In your Google Sheet, click:
+   Extensions → Apps Script
+
+2. Delete all existing code in the editor (the default myFunction)
+
+3. Open the file "Code.gs" provided with this package
+
+4. PASTE the entire contents into the Apps Script editor
+
+5. Find this line near the top:
+   var SHEET_ID = 'YOUR_GOOGLE_SHEET_ID_HERE';
+
+6. Replace YOUR_GOOGLE_SHEET_ID_HERE with your actual Sheet ID from Step 1
+   Example: var SHEET_ID = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms';
+
+7. Click the 💾 Save icon (or Ctrl+S)
+
+8. Name the project: "Gate System"
+
+
+## STEP 3 — Deploy as Web App
+──────────────────────────────
+1. Click "Deploy" → "New deployment"
+
+2. Click the gear icon ⚙ next to "Select type" → choose "Web app"
+
+3. Fill in the settings:
+   - Description:         Gate System v1
+   - Execute as:          Me (your Google account)
+   - Who has access:      Anyone   ← IMPORTANT: must be "Anyone"
+
+4. Click "Deploy"
+
+5. Google will ask you to authorize — click "Authorize access"
+   → Choose your Google account
+   → Click "Advanced" → "Go to Gate System (unsafe)" → "Allow"
+
+6. COPY the Web App URL shown — it looks like:
+   https://script.google.com/macros/s/XXXXXXXXXX/exec
+
+7. SAVE this URL — you need it in Step 4.
+
+
+## STEP 4 — Connect the HTML Forms
+────────────────────────────────────
+You need to paste your Web App URL into BOTH html files.
+
+### In post7-entry.html:
+1. Open the file in a text editor (Notepad, VS Code, etc.)
+2. Find this line (near the bottom in the <script> section):
+   const SHEET_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+3. Replace with your actual URL:
+   const SHEET_URL = 'https://script.google.com/macros/s/XXXXXXXXXX/exec';
+4. Save the file.
+
+### In post1-exit.html:
+1. Open the file in a text editor
+2. Find the same line:
+   const SHEET_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+3. Replace with the same URL
+4. Save the file.
+
+
+## STEP 5 — Host the Files (Choose One Option)
+────────────────────────────────────────────────
+
+### OPTION A: Google Drive (Easiest — Recommended)
+1. Upload both HTML files to Google Drive
+2. Right-click each file → "Share" → "Anyone with link can view"
+3. Right-click → "Open with" → "Google Sites" OR just share the links
+   Note: Google Drive preview does NOT run JavaScript.
+   Use Option B or C for full functionality.
+
+### OPTION B: GitHub Pages (Free, Works on all devices) ✓ RECOMMENDED
+1. Go to https://github.com → Sign up/login
+2. Create a new repository: "gate-system" (set to Public)
+3. Upload post7-entry.html and post1-exit.html
+4. Go to Settings → Pages → Source: "main" branch → / (root) → Save
+5. Your URLs will be:
+   Post 7: https://YOURUSERNAME.github.io/gate-system/post7-entry.html
+   Post 1: https://YOURUSERNAME.github.io/gate-system/post1-exit.html
+6. Share Post 7 URL with PC guard, Post 1 URL with Android guard
+
+### OPTION C: Any Web Host / Local Server
+- Upload both HTML files to any web hosting (Netlify, Vercel, etc.)
+- Or run locally: python3 -m http.server 8000
+
+### OPTION D: WhatsApp/Email the file directly
+- Send the HTML file to the Android guard
+- They open it in Chrome → works as-is (using localStorage only, no server sync)
+- Use this only if Google Sheets sync is not needed on that device
+
+
+## STEP 6 — Test the System
+─────────────────────────────
+1. Open post7-entry.html on PC
+   - Check: status bar shows "Connected ✓"
+   - Fill in all fields and click LOG ENTRY
+   - Open Google Sheet — row should appear in "Entry Log" tab
+
+2. Open post1-exit.html on Android (Chrome)
+   - Type the same plate number → click SEARCH
+   - Entry record should appear with duration ticking
+   - Click LOG EXIT
+   - Open Google Sheet — same row should now show Time Out, Duration, Status = OUT
+
+
+## STEP 7 — Update After Changes
+──────────────────────────────────
+If you ever update the Apps Script code:
+1. Go to Apps Script → Deploy → Manage deployments
+2. Click the pencil ✏ icon on your deployment
+3. Change version to "New version"
+4. Click "Deploy"
+(The URL stays the same — no need to update the HTML files)
+
+
+## TROUBLESHOOTING
+──────────────────
+Problem: "Server unreachable" in the status bar
+Solution: Check that SHEET_URL is correct and deployment is set to "Anyone"
+
+Problem: Data appears in localStorage but not in Google Sheet
+Solution: Re-deploy the Apps Script as a new version (Step 7)
+
+Problem: POST 1 can't find entry logged on POST 7 (different devices)
+Solution: Make sure both devices are connected to internet + Google Sheets sync is working
+
+Problem: Camera not working for OCR scan
+Solution: The app must be served over HTTPS for camera access.
+          Use GitHub Pages (Option B) or another HTTPS host.
+
+Problem: Android Chrome can't open the file
+Solution: Upload to GitHub Pages and open the link in Chrome on Android
+
+
+## SHEET STRUCTURE (auto-created)
+────────────────────────────────────
+The Apps Script creates the "Entry Log" tab automatically with these columns:
+
+A: ID              | Unique entry timestamp ID
+B: Date            | Entry date (DD/MM/YYYY)
+C: Time In         | HH:MM:SS
+D: Time Out        | HH:MM:SS (filled by Post 1)
+E: Duration        | HH:MM:SS (calculated)
+F: License Plate   | Vehicle plate number
+G: Driver Name     |
+H: Company         |
+I: SIM Type        | SIM A / B1 / B2 / C
+J: ID Number       | NIK/SIM Number
+K: Driver Card     |
+L: Vehicle Type    | Car / Truck CDD / etc.
+M: Destination     | WH A / Hair Care / etc.
+N: Post In         | Post 7
+O: Post Out        | Post 1
+P: Status          | IN → OUT
+
+
+## FILES IN THIS PACKAGE
+──────────────────────────
+post7-entry.html   → Open on PC at Guard Post 7 (Entry)
+post1-exit.html    → Open on Android at Guard Post 1 (Exit)
+Code.gs            → Paste into Google Apps Script editor
+DEPLOYMENT.txt     → This guide

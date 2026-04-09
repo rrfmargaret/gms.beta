@@ -1,19 +1,23 @@
 {
   "version": 2,
-  "public": true,
-  "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
-    { "source": "/post7", "destination": "/post7-entry.html" },
-    { "source": "/post1", "destination": "/post1-exit.html" }
+    {
+      "source": "/entry",
+      "destination": "/post7-entry.html"
+    },
+    {
+      "source": "/exit",
+      "destination": "/post1-exit.html"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
       ]
     }
   ]
