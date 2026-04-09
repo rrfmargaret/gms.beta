@@ -199,57 +199,69 @@
   }
   .search-input-container {
     display: flex;
-    align-items: stretch;
-    border: 1px solid #d0d4e0;
-    border-radius: 6px;
-    padding: 6px;
-    background: var(--input-bg);
+    align-items: center;
+    gap: 10px;
+    background: transparent;
   }
-  body.light .search-input-container { border-color: var(--accent); }
   
   .plate-input-new {
     flex: 1;
-    background: transparent;
-    border: none;
+    background: var(--input-bg);
+    border: 2px solid var(--border);
     color: var(--text);
     font-family: 'Share Tech Mono', monospace;
     font-size: 32px;
-    letter-spacing: 6px;
+    letter-spacing: 4px;
     text-align: center;
     text-transform: uppercase;
     outline: none;
     min-width: 0;
+    padding: 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
   }
-  body.light .plate-input-new { color: var(--accent); }
-  .plate-input-new::placeholder { color: var(--muted); letter-spacing: 4px; opacity: 0.5; font-size: 24px; }
-  .btn-scan-small {
-    background: var(--surface2);
-    border: none;
-    color: var(--text);
-    padding: 0 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 6px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+  
+  body.light .plate-input-new { border-color: var(--accent); color: var(--accent); }
+  .plate-input-new:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(29, 185, 106, 0.1); }
+  .plate-input-new::placeholder { color: var(--muted); letter-spacing: 2px; opacity: 0.3; font-size: 20px; }
+  
   .btn-search-new {
     background: var(--accent);
-    color: #fff;
+    color: #000;
     border: none;
     font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 15px;
+    font-weight: 900;
+    font-size: 16px;
     letter-spacing: 1px;
-    padding: 0 28px;
-    border-radius: 4px;
+    padding: 0 32px;
+    height: 64px;
+    border-radius: 8px;
     cursor: pointer;
     text-transform: uppercase;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(29, 185, 106, 0.2);
+  }
+
+  /* PWA Install Button */
+  .btn-install-pwa {
+    display: none;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+    align-items: center;
+    gap: 6px;
+    margin-left: 10px;
   }
 
   /* Manual Bulk New */
@@ -1035,16 +1047,27 @@
   }
 
   @media (max-width: 600px) {
+    .mode-toggle { gap: 12px; margin-bottom: 30px; }
+    .toggle-btn { flex: 1; padding: 14px 10px; font-size: 13px; justify-content: center; }
+    .section-label { font-size: 13px; letter-spacing: 2px; }
+    
+    .search-input-container { flex-direction: column; align-items: stretch; gap: 12px; }
+    .plate-input-new { font-size: 40px; padding: 20px; letter-spacing: 6px; }
+    .btn-search-new { width: 100%; padding: 20px; font-size: 20px; height: auto; }
+    
     .vehicle-details { grid-template-columns: 1fr 1fr; }
     .detail-cell:nth-child(3n) { border-right: 1px solid var(--border); }
     .detail-cell:nth-child(2n) { border-right: none; }
     .plate-input { font-size: 28px; letter-spacing: 2px; }
-    .btn-submit { padding: 12px 20px; font-size: 16px; }
-    .main { padding: 14px 14px; }
+    .btn-submit { padding: 16px 20px; font-size: 18px; width: 100%; justify-content: center; }
+    .main { padding: 10px 14px; }
+    .action-bar { flex-direction: column; gap: 14px; padding: 16px; }
+    .action-bar > div:last-child { width: 100%; }
+    .btn-reset { flex: 1; }
     .duration-display { flex-direction: column; align-items: flex-start; gap: 10px; }
     .time-out-display { text-align: left; }
-    table { font-size: 12px; }
-    thead th, tbody td { padding: 7px 8px; }
+    table { font-size: 11px; }
+    thead th, tbody td { padding: 6px 4px; }
   }
 </style>
 </head>
@@ -1060,6 +1083,10 @@
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:12px">
+    <button id="install-pwa" class="btn-install-pwa">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      Pasang Aplikasi
+    </button>
     <div>
       <div class="clock" id="clock" style="color:white; font-family:inherit; font-weight:600; font-size:0.875rem;">--:--:--</div>
       <div class="clock-date" id="clock-date" style="color:white; opacity:0.8; font-family:inherit; font-weight:500; font-size:0.65rem;">---</div>
@@ -1098,12 +1125,6 @@
         maxlength="12" autocomplete="off" spellcheck="false"
         oninput="this.value=this.value.toUpperCase().replace(/\s+/g, ''); clearResult();"
         onkeydown="if(event.key==='Enter') searchVehicle()">
-      <button class="btn-scan-small">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="2"/>
-        </svg>
-        <span style="font-size:9px; display:block; font-weight:700; margin-top:2px; color:var(--muted)">SCAN</span>
-      </button>
       <button class="btn-search-new" onclick="searchVehicle()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         SEARCH
@@ -1841,6 +1862,40 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+// ---- SERVICE WORKER & PWA INSTALL ----
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+}
+
+let deferredPrompt;
+const installBtn = document.getElementById('install-pwa');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'flex';
+});
+
+installBtn.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      installBtn.style.display = 'none';
+      deferredPrompt = null;
+    }
+  } else {
+    // Fallback for iOS/Safari or if prompt is not available
+    showToast('Buka menu browser dan pilih "Add to Home Screen"');
+  }
+});
+
+// Hide install button if already in standalone mode
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  installBtn.style.display = 'none';
+}
+
 </script>
 </body>
 </html>

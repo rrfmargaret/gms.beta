@@ -328,25 +328,20 @@
       border-color: var(--secondary) !important;
     }
 
-    .btn-scan {
-      background: var(--secondary-container);
-      color: #004b69;
-      /* on-secondary-container */
+    /* PWA Install Button */
+    .btn-install-pwa {
+      display: none;
+      background: white;
+      color: #003da5;
       border: none;
-      padding: 0 1.5rem;
-      font-size: 1rem;
-      border-radius: var(--border-radius);
-      font-weight: 700;
-      text-transform: uppercase;
+      font-weight: 800;
+      font-size: 10px;
+      padding: 6px 12px;
+      border-radius: 20px;
       cursor: pointer;
-      display: flex;
+      text-transform: uppercase;
       align-items: center;
-      gap: 0.5rem;
-      transition: opacity 0.2s;
-    }
-
-    .btn-scan:hover {
-      opacity: 0.9;
+      gap: 6px;
     }
 
     /* CHIP SELECTORS */
@@ -752,6 +747,10 @@
     </div>
 
     <div class="flex items-center gap-6">
+      <button id="install-pwa" class="btn-install-pwa">
+        <span class="material-symbols-outlined" style="font-size:14px">download</span>
+        Pasang Aplikasi
+      </button>
       <div class="text-right hidden sm:block">
         <div id="clock" style="font-size:0.875rem; font-weight:600; letter-spacing:0.02em; line-height:1.2">--:--:--</div>
         <div id="clock-date" style="font-size:0.65rem; font-weight:500; text-transform:uppercase; letter-spacing:0.05em; opacity:0.8">---</div>
@@ -1242,7 +1241,40 @@
         document.getElementById('sync-status').textContent = 'Saved Locally';
       }
     }
-  </script>
+  
+  // ---- PWA INSTALL LOGIC ----
+  let deferredPrompt;
+  const installBtn = document.getElementById('install-pwa');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'flex';
+  });
+
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installBtn.style.display = 'none';
+        deferredPrompt = null;
+      }
+    } else {
+      showToast('Buka menu browser dan pilih "Add to Home Screen"');
+    }
+  });
+
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    installBtn.style.display = 'none';
+  }
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW fail', err));
+    });
+  }
+</script>
 </body>
 
 </html>
