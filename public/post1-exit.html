@@ -2,7 +2,11 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#003da5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
 <title>POST 1 — VEHICLE EXIT</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;500;600;700;900&family=Barlow+Condensed:wght@600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -60,7 +64,9 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Barlow', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -68,26 +74,34 @@
 
   /* Header */
   .header {
-    background: var(--surface);
-    border-bottom: 2px solid var(--accent);
+    background-color: rgba(0, 61, 165, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: white;
     padding: 14px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-bottom: none;
+  }
+
+  body.light .header {
+    background-color: rgba(0, 61, 165, 0.95);
   }
 
   .header-left { display: flex; align-items: center; gap: 14px; }
 
   .post-badge {
-    background: var(--accent);
-    color: #000;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 22px;
-    letter-spacing: 1px;
-    padding: 6px 14px;
-    border-radius: 4px;
+    background: white;
+    color: #003da5;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
   }
 
   .header-title {
@@ -142,6 +156,257 @@
     margin-bottom: 8px;
     padding-left: 2px;
   }
+
+
+  /* Toggle Mode */
+  .mode-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .toggle-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .toggle-btn.active {
+    background: rgba(29, 185, 106, 0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  
+  /* New Search Section (Auto) */
+  .search-section-new {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .search-input-container {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid #d0d4e0;
+    border-radius: 6px;
+    padding: 6px;
+    background: var(--input-bg);
+  }
+  body.light .search-input-container { border-color: var(--accent); }
+  
+  .plate-input-new {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 32px;
+    letter-spacing: 6px;
+    text-align: center;
+    text-transform: uppercase;
+    outline: none;
+    min-width: 0;
+  }
+  body.light .plate-input-new { color: var(--accent); }
+  .plate-input-new::placeholder { color: var(--muted); letter-spacing: 4px; opacity: 0.5; font-size: 24px; }
+  .btn-scan-small {
+    background: var(--surface2);
+    border: none;
+    color: var(--text);
+    padding: 0 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .btn-search-new {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 1px;
+    padding: 0 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Manual Bulk New */
+  .bulk-section-new {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid #3b82f6; /* Blue indicator for manual */
+    border-radius: var(--radius);
+    padding: 24px;
+    display: none;
+  }
+  .bulk-section-new.show { display: block; animation: slideIn 0.2s ease-out; }
+  
+  .bulk-header-new {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bulk-title-new {
+    font-size: 11px;
+    font-weight: 700;
+    color: #3b82f6;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .btn-fill-now {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-fill-now:hover { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  
+  .bulk-row-new {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .bulk-row-index {
+    color: #3b82f6;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    width: 20px;
+    text-align: right;
+  }
+  .bulk-input-new {
+    flex: 1;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    outline: none;
+  }
+  .bulk-input-new:focus { border-color: #3b82f6; }
+  .bulk-time-new {
+    width: 140px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px;
+    border-radius: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+  }
+  .bulk-time-new:focus { border-color: #3b82f6; }
+  
+  .btn-dash {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .btn-delete-row {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .btn-delete-row:hover { background: rgba(229,62,62,0.1); color: var(--red); border-color: var(--red); }
+  
+  .btn-add-row-new {
+    width: 100%;
+    background: transparent;
+    border: 1.5px dashed var(--border);
+    color: #3b82f6;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-top: 8px;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  .btn-add-row-new:hover { background: rgba(59,130,246,0.05); border-color: #3b82f6; }
+  
+  .bulk-summary {
+    display: flex;
+    gap: 16px;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .bulk-summary span { color: var(--text); font-weight: 700; }
+  
+  .btn-submit-bulk-new {
+    width: 100%;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    letter-spacing: 1px;
+    padding: 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity 0.2s;
+  }
+  .btn-submit-bulk-new:hover { opacity: 0.9; }
 
   /* Search section */
   .search-section {
@@ -202,17 +467,14 @@
     white-space: nowrap;
   }
 
-  .btn-search:hover { background: #4dffaa; }
-
-  .ocr-btn {
-    background: var(--surface2);
+  .btn-bulk-toggle {
+    background: transparent;
     border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Barlow Condensed', sans-serif;
+    color: var(--muted);
     font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 1px;
-    padding: 0 18px;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    padding: 0 12px;
     height: 68px;
     border-radius: var(--radius);
     cursor: pointer;
@@ -221,12 +483,86 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
-    transition: background 0.15s, border-color 0.15s;
+    transition: all 0.15s;
     text-transform: uppercase;
     white-space: nowrap;
   }
 
-  .ocr-btn:hover { background: #252a38; border-color: #444; }
+  .btn-bulk-toggle:hover { 
+    background: rgba(255,152,0,0.1); 
+    border-color: #ff9800; 
+    color: #ff9800; 
+  }
+
+  .bulk-section {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid #ff9800;
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .bulk-section.show {
+    display: block;
+    animation: slideIn 0.2s ease-out;
+  }
+
+  .bulk-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .bulk-input {
+    flex: 2;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .bulk-input:focus { border-color: #ff9800; }
+  
+  .bulk-time {
+    flex: 1;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px;
+    border-radius: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    outline: none;
+    text-align: center;
+  }
+  .bulk-time:focus { border-color: #ff9800; }
+
+  .btn-submit-bulk {
+    width: 100%;
+    background: #ff9800;
+    color: #000;
+    font-weight: 800;
+    border: none;
+    padding: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-submit-bulk:hover { background: #e68a00; }
 
   /* Vehicle card (result) */
   .vehicle-card {
@@ -486,13 +822,14 @@
   .action-bar {
     background: var(--surface);
     border-top: 1px solid var(--border);
-    padding: 16px 24px;
+    padding: 16px 24px calc(16px + env(safe-area-inset-bottom));
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     position: sticky;
     bottom: 0;
+    z-index: 50;
   }
 
   .status-indicator {
@@ -662,265 +999,6 @@
     cursor: pointer;
   }
 
-  /* Mode toggle */
-  .mode-toggle-bar {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 4px;
-    margin-bottom: 16px;
-    width: fit-content;
-  }
-
-  .mode-btn {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 8px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background: transparent;
-    color: var(--muted);
-    transition: all 0.18s;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  .mode-btn.active {
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
-  }
-
-  .mode-btn.active.auto { color: var(--accent); }
-  .mode-btn.active.manual { color: #4a9eff; }
-
-  /* Bulk manual panel */
-  .bulk-panel {
-    display: none;
-    background: var(--surface);
-    border: 1px solid #2a4a7a;
-    border-top: 3px solid #4a9eff;
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-
-  .bulk-panel.show { display: block; }
-
-  .bulk-time-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 12px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
-
-  .bulk-time-wrap { flex: 0 0 auto; }
-
-  .bulk-time-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: #4a9eff;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .bulk-time-input {
-    background: var(--input-bg);
-    border: 2px solid #4a9eff;
-    color: #4a9eff;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 28px;
-    letter-spacing: 4px;
-    text-align: center;
-    padding: 10px 16px;
-    border-radius: var(--radius);
-    outline: none;
-    width: 160px;
-  }
-
-  .bulk-time-input:focus { box-shadow: 0 0 0 3px rgba(74,158,255,0.15); }
-
-  .btn-use-now {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 10px 16px;
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-    height: 54px;
-  }
-
-  .btn-use-now:hover { border-color: #4a9eff; color: #4a9eff; }
-
-  /* Bulk plate list */
-  .bulk-plates-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .bulk-plate-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .bulk-plate-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .bulk-row-time {
-    background: var(--input-bg);
-    border: 1px solid #2a4a7a;
-    color: #4a9eff;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 15px;
-    letter-spacing: 1px;
-    text-align: center;
-    padding: 10px 8px;
-    border-radius: var(--radius);
-    outline: none;
-    width: 110px;
-    flex-shrink: 0;
-    transition: border-color 0.2s;
-  }
-  .bulk-row-time:focus { border-color: #4a9eff; box-shadow: 0 0 0 2px rgba(74,158,255,0.12); }
-
-  .bulk-row-num {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    min-width: 20px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-
-  .bulk-plate-field {
-    flex: 1;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 16px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    padding: 10px 14px;
-    border-radius: var(--radius);
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .bulk-plate-field:focus { border-color: #4a9eff; }
-  .bulk-plate-field::placeholder { color: var(--muted); letter-spacing: 2px; font-size: 14px; }
-
-  .bulk-plate-status {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    min-width: 80px;
-    text-align: center;
-    padding: 4px 10px;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    background: var(--surface2);
-  }
-
-  .bulk-plate-status.found { background: #0a2e1a; border-color: var(--accent); color: var(--accent); }
-  .bulk-plate-status.not-found { background: #2e0a0a; border-color: var(--red); color: var(--red); }
-  .bulk-plate-status.logged { background: #0a1a2e; border-color: #4a9eff; color: #4a9eff; }
-
-  .btn-remove-row {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    width: 32px; height: 32px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-    flex-shrink: 0;
-  }
-  .btn-remove-row:hover { border-color: var(--red); color: var(--red); }
-
-  .btn-add-plate {
-    background: transparent;
-    border: 1px dashed var(--border);
-    color: var(--muted);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 10px;
-    border-radius: var(--radius);
-    cursor: pointer;
-    width: 100%;
-    transition: all 0.15s;
-  }
-  .btn-add-plate:hover { border-color: #4a9eff; color: #4a9eff; }
-
-  .bulk-summary {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 8px;
-    letter-spacing: 0.5px;
-  }
-
-  .bulk-summary span { color: #4a9eff; font-weight: 700; }
-
-  .btn-bulk-submit {
-    background: #4a9eff;
-    border: none;
-    color: #000;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 16px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 13px 30px;
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 14px;
-    width: 100%;
-    justify-content: center;
-  }
-  .btn-bulk-submit:hover { background: #74b4ff; }
-  .btn-bulk-submit:active { transform: scale(0.98); }
-  .btn-bulk-submit:disabled { background: var(--surface2); color: var(--muted); cursor: not-allowed; }
-
   /* Credits footer */
   .credits {
     text-align: center;
@@ -960,7 +1038,7 @@
     .vehicle-details { grid-template-columns: 1fr 1fr; }
     .detail-cell:nth-child(3n) { border-right: 1px solid var(--border); }
     .detail-cell:nth-child(2n) { border-right: none; }
-    .plate-input { font-size: 24px; letter-spacing: 4px; }
+    .plate-input { font-size: 28px; letter-spacing: 2px; }
     .btn-submit { padding: 12px 20px; font-size: 16px; }
     .main { padding: 14px 14px; }
     .duration-display { flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -977,16 +1055,16 @@
   <div class="header-left">
     <div class="post-badge">POST 1</div>
     <div>
-      <div class="header-title">Vehicle Exit</div>
-      <div class="header-subtitle">Gate Access Control System</div>
+      <div class="header-title" style="color:white; font-family:inherit; letter-spacing:-0.015em; font-size:1.125rem;">Vehicle Exit</div>
+      <div class="header-subtitle" style="color:white; opacity:0.8; font-family:inherit; font-size:0.65rem; font-weight:500;">Gate Access Control System</div>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:12px">
     <div>
-      <div class="clock" id="clock">--:--:--</div>
-      <div class="clock-date" id="clock-date">---</div>
+      <div class="clock" id="clock" style="color:white; font-family:inherit; font-weight:600; font-size:0.875rem;">--:--:--</div>
+      <div class="clock-date" id="clock-date" style="color:white; opacity:0.8; font-family:inherit; font-weight:500; font-size:0.65rem;">---</div>
     </div>
-    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" style="color:white; border-color:transparent; background:rgba(255,255,255,0.1);">
       <svg id="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block">
         <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
       </svg>
@@ -1001,69 +1079,65 @@
 <main class="main">
 
   <!-- Mode Toggle -->
-  <div class="mode-toggle-bar">
-    <button class="mode-btn active auto" id="btn-mode-auto" onclick="setMode('auto')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+  <div class="mode-toggle">
+    <button class="toggle-btn active" id="btn-auto-nav" onclick="setMode('auto')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       AUTO
     </button>
-    <button class="mode-btn manual" id="btn-mode-manual" onclick="setMode('manual')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    <button class="toggle-btn" id="btn-bulk-nav" onclick="setMode('bulk')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       MANUAL BULK
     </button>
   </div>
 
-  <!-- BULK MANUAL PANEL -->
-  <div class="bulk-panel" id="bulk-panel">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:#4a9eff;text-transform:uppercase">
-        Daftar Kendaraan Keluar — Tiap baris bisa beda jam
-      </div>
-      <button class="btn-use-now" onclick="fillAllNow()" style="height:36px;font-size:11px">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Isi Semua Jam Sekarang
-      </button>
-    </div>
-
-    <div class="bulk-plate-list" id="bulk-plate-list">
-      <!-- rows added dynamically -->
-    </div>
-    <button class="btn-add-plate" onclick="addBulkRow()">+ Tambah Kendaraan</button>
-
-    <div class="bulk-summary" id="bulk-summary"></div>
-
-    <button class="btn-bulk-submit" id="btn-bulk-submit" onclick="submitBulk()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22v-20M2 12l10 10 10-10"/></svg>
-      LOG EXIT SEMUA
-    </button>
-  </div>
-
-  <!-- AUTO MODE SECTION -->
-  <div id="auto-section">
-  <!-- Search by plate -->
-  <div class="section-label">Search Vehicle by License Plate</div>
-  <div class="search-section">
-    <div class="search-row">
-      <div class="plate-input-wrap">
-        <input type="text" class="plate-input" id="search-plate" placeholder="B1234XX"
-          maxlength="12" autocomplete="off" spellcheck="false"
-          oninput="this.value=this.value.toUpperCase().replace(/\s+/g,''); clearResult();"
-          onkeydown="if(event.key==='Enter') searchVehicle()">
-      </div>
-      <button class="ocr-btn" onclick="openOCR()" title="Scan plate with camera">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <rect x="2" y="7" width="20" height="10" rx="2"/>
-          <circle cx="12" cy="12" r="2.5"/>
-          <path d="M6 2H4a2 2 0 0 0-2 2v2M18 2h2a2 2 0 0 1 2 2v2M6 22H4a2 2 0 0 1-2-2v-2M18 22h2a2 2 0 0 0 2-2v-2"/>
+  <!-- Search by plate (Auto Mode) -->
+  <div class="search-section-new" id="auto-section">
+    <div class="section-label" style="text-align: center; margin-bottom: 12px; color: var(--accent);">SEARCH VEHICLE BY LICENSE PLATE</div>
+    <div class="search-input-container">
+      <input type="text" class="plate-input-new" id="search-plate" placeholder="B 1234 XX"
+        maxlength="12" autocomplete="off" spellcheck="false"
+        oninput="this.value=this.value.toUpperCase().replace(/\s+/g, ''); clearResult();"
+        onkeydown="if(event.key==='Enter') searchVehicle()">
+      <button class="btn-scan-small">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="2"/>
         </svg>
-        SCAN
+        <span style="font-size:9px; display:block; font-weight:700; margin-top:2px; color:var(--muted)">SCAN</span>
       </button>
-      <button class="btn-search" onclick="searchVehicle()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-        </svg>
+      <button class="btn-search-new" onclick="searchVehicle()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         SEARCH
       </button>
     </div>
+  </div>
+
+  <!-- Bulk Update Section (Manual Mode) -->
+  <div class="bulk-section-new" id="bulk-section">
+    <div class="bulk-header-new">
+       <span class="bulk-title-new">DAFTAR KENDARAAN KELUAR - TIAP BARIS BISA BEDA JAM</span>
+       <button class="btn-fill-now" onclick="fillAllTimesNow()">
+         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+         ISI SEMUA JAM SEKARANG
+       </button>
+    </div>
+    
+    <div id="bulk-rows">
+    </div>
+
+    <button class="btn-add-row-new" onclick="addBulkRow()">+ TAMBAH KENDARAAN</button>
+
+    <div class="bulk-summary">
+      <div>Total baris: <span id="bulk-total">0</span></div>
+      <div>|</div>
+      <div>Siap diproses: <span id="bulk-ready" style="color:var(--accent);">0</span></div>
+      <div>|</div>
+      <div>Tidak ditemukan: <span id="bulk-error" style="color:var(--red);">0</span></div>
+    </div>
+
+    <button class="btn-submit-bulk-new" onclick="submitBulkExit()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 4v16M5 13l7 7 7-7"/></svg>
+      LOG EXIT SEMUA
+    </button>
   </div>
 
   <!-- Not found -->
@@ -1130,13 +1204,11 @@
     </div>
   </div>
 
-  </div><!-- end auto-section -->
-
   <!-- Today's exit log -->
   <div class="log-section">
     <div class="log-header">
       <span class="log-title">Today's Exit Log</span>
-      <span class="log-count" id="log-count">0 exits</span>
+      <div style="display:flex; align-items:center; gap:12px;"><span class="log-count" id="log-count">0 exits</span><button onclick="clearExitLogDisplay()" style="background:none; border:none; color:var(--red); font-size:10px; font-weight:700; text-transform:uppercase; cursor:pointer; display:flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg> CLEAR</button></div>
     </div>
     <div style="overflow-x:auto">
       <table>
@@ -1183,25 +1255,10 @@
 
 <!-- Credits -->
 <footer class="credits">
-  <span class="credits-badge">
-    <span class="credits-dot"></span>
-    Built by rrfmargaret
+  <span class="credits-badge" style="border:none; background:transparent;">
+    <span class="text-xs font-bold" style="color:var(--muted); font-family:inherit; font-size:12px; font-weight:700;">&copy; rrfmargaret</span>
   </span>
 </footer>
-
-<!-- OCR Modal -->
-<div class="modal-overlay" id="ocr-modal">
-  <div class="modal">
-    <div class="modal-title">Scan License Plate</div>
-    <video id="camera-view" autoplay playsinline></video>
-    <canvas id="snapshot" style="display:none"></canvas>
-    <p class="modal-note">Point camera at license plate, then tap CAPTURE</p>
-    <div class="modal-actions">
-      <button class="btn-capture" onclick="captureOCR()">Capture</button>
-      <button class="btn-close-modal" onclick="closeOCR()">Cancel</button>
-    </div>
-  </div>
-</div>
 
 <!-- Toast -->
 <div class="toast" id="toast">
@@ -1257,58 +1314,6 @@ function saveLogs(logs) {
   localStorage.setItem(getTodayKey(), JSON.stringify(logs));
 }
 
-// Returns ALL active entries (no timeOut) across ALL days.
-// Vehicles may stay in the plant for multiple days, so we must
-// scan every gate_log_* key, not just today's.
-function getAllActiveLogs() {
-  const active = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (!key || !key.startsWith('gate_log_')) continue;
-    try {
-      const logs = JSON.parse(localStorage.getItem(key) || '[]');
-      logs.forEach(e => { if (e.plate && !e.timeOut) active.push({ entry: e, storageKey: key }); });
-    } catch {}
-  }
-  return active; // array of { entry, storageKey }
-}
-
-// Find one active entry by plate across ALL days.
-// Returns { entry, storageKey } or null.
-function findActiveEntry(plate) {
-  plate = plate.toUpperCase().replace(/\s+/g, '').trim();
-  // Check most recent days first by sorting keys descending
-  const keys = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k && k.startsWith('gate_log_')) keys.push(k);
-  }
-  keys.sort().reverse(); // most recent first
-
-  for (const key of keys) {
-    try {
-      const logs = JSON.parse(localStorage.getItem(key) || '[]');
-      const entry = logs.find(e => e.plate && e.plate.toUpperCase().replace(/\s+/g,'') === plate && !e.timeOut);
-      if (entry) return { entry, storageKey: key };
-    } catch {}
-  }
-  return null;
-}
-
-// Update a specific entry in its own storage key and write it back.
-function updateEntryInStorage(storageKey, entryId, updates) {
-  try {
-    const logs = JSON.parse(localStorage.getItem(storageKey) || '[]');
-    const idx = logs.findIndex(e => e.id === entryId);
-    if (idx !== -1) {
-      Object.assign(logs[idx], updates);
-      localStorage.setItem(storageKey, JSON.stringify(logs));
-      return logs[idx];
-    }
-  } catch {}
-  return null;
-}
-
 function getExitKey() {
   const d = new Date();
   return `gate_exit_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
@@ -1325,11 +1330,28 @@ function saveExitLogs(logs) {
 // ---- CURRENT FOUND RECORD ----
 let currentRecord = null;
 let durationInterval = null;
+let activeEntriesCache = [];
+
+// ---- PRELOAD CACHE ----
+async function preloadActiveEntries() {
+  if (!SHEET_URL || SHEET_URL.includes('YOUR_GOOGLE')) return;
+  document.getElementById('sync-status').textContent = 'Fetching cache...';
+  try {
+    const res = await fetch(`${SHEET_URL}?action=getActiveEntries`);
+    const json = await res.json();
+    if (json.status === 'ok') {
+      activeEntriesCache = json.entries;
+      document.getElementById('sync-status').textContent = `Cache ready: ${activeEntriesCache.length} vehicles`;
+      setTimeout(() => document.getElementById('sync-status').textContent = 'Ready', 3000);
+    }
+  } catch {
+    document.getElementById('sync-status').textContent = 'Cache sync failed (Offline)';
+  }
+}
 
 // ---- SEARCH ----
 async function searchVehicle() {
-  // Normalize: uppercase, strip all spaces (same format as stored plate)
-  const query = document.getElementById('search-plate').value.trim().toUpperCase().replace(/\s+/g, '');
+  const query = document.getElementById('search-plate').value.trim().toUpperCase();
   if (!query) { showToastError('Please enter a license plate to search'); return; }
 
   document.getElementById('not-found').classList.remove('show');
@@ -1338,15 +1360,33 @@ async function searchVehicle() {
   document.getElementById('btn-logout').disabled = true;
   currentRecord = null;
   clearInterval(durationInterval);
-  document.getElementById('sync-status').textContent = 'Searching...';
+  document.getElementById('sync-status').textContent = 'Searching cache...';
 
-  // Try server first
+  // 1. Instant Cache Search
+  const cachedMatch = activeEntriesCache.find(e => String(e.plate).toUpperCase() === query);
+  if (cachedMatch) {
+    if (!cachedMatch.fullTimeIn) cachedMatch.fullTimeIn = new Date().toISOString();
+    populateCard(cachedMatch);
+    document.getElementById('sync-status').textContent = 'Found instantly';
+    return;
+  }
+
+  // 2. Fallback: search localStorage (same browser/device)
+  const logs = getLogs();
+  const localMatch = logs.find(e => e.plate === query && !e.timeOut);
+  if (localMatch) {
+    populateCard(localMatch);
+    document.getElementById('sync-status').textContent = 'Found locally';
+    return;
+  }
+
+  // 3. Fallback to server search if truly missing
+  document.getElementById('sync-status').textContent = 'Searching server...';
   const serverResult = await searchFromServer(query);
 
   if (serverResult) {
     if (serverResult.status === 'found') {
       const record = serverResult.record;
-      // fullTimeIn is stored as ISO string — use directly
       if (!record.fullTimeIn) record.fullTimeIn = new Date().toISOString();
       populateCard(record);
       document.getElementById('sync-status').textContent = 'Found on server';
@@ -1355,40 +1395,12 @@ async function searchVehicle() {
       showNotFound(`Plate ${query} already logged out at ${serverResult.timeOut}.`);
       document.getElementById('sync-status').textContent = 'Ready';
       return;
-    } else if (serverResult.status === 'not_found') {
-      showNotFound(`No active entry record found for plate ${query}.`);
-      document.getElementById('sync-status').textContent = 'Ready';
-      return;
     }
   }
 
-  // Fallback: search localStorage across ALL days (vehicles may stay multiple days)
-  document.getElementById('sync-status').textContent = 'Searching locally...';
-  const found = findActiveEntry(query);
-
-  if (!found) {
-    // Check if already out (scan all days)
-    let alreadyOutTime = null;
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (!k || !k.startsWith('gate_log_')) continue;
-      try {
-        const logs = JSON.parse(localStorage.getItem(k) || '[]');
-        const out = logs.find(e => e.plate === query && e.timeOut);
-        if (out) { alreadyOutTime = out.timeOut; break; }
-      } catch {}
-    }
-    if (alreadyOutTime) {
-      showNotFound(`Plate ${query} already logged out at ${alreadyOutTime}.`);
-    } else {
-      showNotFound(`No active entry record found for plate ${query}.`);
-    }
-    document.getElementById('sync-status').textContent = 'Ready';
-    return;
-  }
-
-  populateCard(found.entry);
-  document.getElementById('sync-status').textContent = 'Found locally';
+  // 4. Truly not found anywhere
+  showNotFound(`No active entry record found for plate ${query}.`);
+  document.getElementById('sync-status').textContent = 'Ready';
 }
 
 function showNotFound(msg) {
@@ -1421,14 +1433,14 @@ function startDurationTicker(fullTimeInStr) {
     const inTime = parseFullTimestamp(fullTimeInStr);
     if (!inTime) return;
     const diffMs = now - inTime;
-    if (diffMs < 0) return;
     const h = Math.floor(diffMs / 3600000);
     const m = Math.floor((diffMs % 3600000) / 60000);
     const s = Math.floor((diffMs % 60000) / 1000);
     document.getElementById('duration-value').textContent =
       `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    const now2 = new Date();
     document.getElementById('timeout-preview').textContent =
-      `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+      `${String(now2.getHours()).padStart(2,'0')}:${String(now2.getMinutes()).padStart(2,'0')}:${String(now2.getSeconds()).padStart(2,'0')}`;
   }, 1000);
 }
 
@@ -1452,38 +1464,43 @@ function getFullTimestamp() {
   return new Date().toISOString();
 }
 
-function calcDuration(fullTimeInStr, fullTimeOutStr) {
+function calcDuration(fullTimeInStr) {
   const inTime = parseFullTimestamp(fullTimeInStr);
-  const outTime = fullTimeOutStr ? parseFullTimestamp(fullTimeOutStr) : new Date();
-  if (!inTime || !outTime) return '—';
-  const diffMs = outTime - inTime;
-  if (diffMs < 0) return '—';
-  const h = Math.floor(diffMs / 3600000);
-  const m = Math.floor((diffMs % 3600000) / 60000);
-  const s = Math.floor((diffMs % 60000) / 1000);
-  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  if (!inTime) return '—';
+  const now = new Date();
+  const diffMs = Math.max(0, now - inTime);
+  return (diffMs / 3600000).toFixed(1) + ' Jam';
 }
 
 function logExit() {
   if (!currentRecord) return;
 
-  const timeOut    = getTimestamp();
+  const timeOut = getTimestamp();
   const fullTimeOut = getFullTimestamp();
-  const duration   = calcDuration(currentRecord.fullTimeIn, fullTimeOut);
+  const duration = calcDuration(currentRecord.fullTimeIn);
 
-  // Update entry in whichever day-key it lives in (may not be today)
-  const found = findActiveEntry(currentRecord.plate);
-  if (found) {
-    updateEntryInStorage(found.storageKey, found.entry.id, { timeOut, fullTimeOut, duration });
+  // Update the entry log
+  const logs = getLogs();
+  const idx = logs.findIndex(e => e.id === currentRecord.id);
+  if (idx !== -1) {
+    logs[idx].timeOut = timeOut;
+    logs[idx].fullTimeOut = fullTimeOut;
+    logs[idx].duration = duration;
+    saveLogs(logs);
   }
 
-  // Save to today's exit log
-  const exitEntry = { ...currentRecord, timeOut, fullTimeOut, duration };
-  const exitLogs  = getExitLogs();
-  exitLogs.push(exitEntry);
+  // Save to exit log
+  const exitLogs = getExitLogs();
+  exitLogs.push({ ...currentRecord, timeOut, fullTimeOut, duration });
   saveExitLogs(exitLogs);
 
-  sendExitToGoogleSheets(exitEntry);
+  // Remove from cache to avoid ghost matches
+  if (activeEntriesCache) {
+    activeEntriesCache = activeEntriesCache.filter(e => e.id !== currentRecord.id);
+  }
+
+  // Sync to Google Sheets asynchronously (No UI blocking)
+  sendExitToGoogleSheets(logs[idx] || { ...currentRecord, timeOut, fullTimeOut, duration });
 
   clearInterval(durationInterval);
   renderExitLog();
@@ -1492,6 +1509,17 @@ function logExit() {
 }
 
 // ---- RENDER EXIT LOG ----
+
+function clearExitLogDisplay() {
+  if (confirm('Clear only the UI log display? This will not delete any data from Google Sheets or the database.')) {
+    const tbody = document.getElementById('log-body');
+    const count = document.getElementById('log-count');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Log cleared for this session</td></tr>';
+    if (count) count.textContent = '0 exits';
+    showToast('UI log cleared');
+  }
+}
+
 function renderExitLog() {
   const logs = getExitLogs();
   const tbody = document.getElementById('log-body');
@@ -1503,17 +1531,11 @@ function renderExitLog() {
     return;
   }
 
-  tbody.innerHTML = logs.slice().reverse().map(e => {
-    // Use stored duration; if invalid (NaN or old data), recalculate from timestamps
-    let dur = e.duration;
-    if (!dur || dur === '—' || dur.includes('NaN')) {
-      dur = calcDuration(e.fullTimeIn, e.fullTimeOut) ;
-    }
-    return `
+  tbody.innerHTML = logs.slice().reverse().map(e => `
     <tr>
       <td style="font-family:'Share Tech Mono',monospace;color:#9ca3af;font-size:12px">${e.timeIn}</td>
       <td style="font-family:'Share Tech Mono',monospace;color:var(--accent);font-size:12px">${e.timeOut}</td>
-      <td class="duration-cell">${dur}</td>
+      <td class="duration-cell">${e.duration}</td>
       <td class="plate-cell">${e.plate}</td>
       <td>${e.driver}</td>
       <td style="color:var(--muted)">${e.company}</td>
@@ -1521,7 +1543,7 @@ function renderExitLog() {
       <td style="color:#9ca3af">${e.dest}</td>
       <td><span class="status-out">OUT</span></td>
     </tr>
-  `}).join('');
+  `).join('');
 }
 
 renderExitLog();
@@ -1562,89 +1584,39 @@ function showToastError(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ---- OCR ----
-let cameraStream = null;
+// ---- GOOGLE SHEETS INTEGRATION ----
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwh-VfYFFMRdExH3mzvXFfYlif4rWQBWP1YNThFeK4Xz36OUv1qr4WSyX2D51Zk_Rjv/exec';
 
-async function openOCR() {
-  document.getElementById('ocr-modal').classList.add('open');
-  try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
-    });
-    document.getElementById('camera-view').srcObject = cameraStream;
-  } catch {
-    showToastError('Camera access denied. Type plate manually.');
-    closeOCR();
-  }
-}
-
-function closeOCR() {
-  document.getElementById('ocr-modal').classList.remove('open');
-  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
-}
-
-function captureOCR() {
-  const video = document.getElementById('camera-view');
-  const canvas = document.getElementById('snapshot');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  const result = prompt('OCR captured. Please type/confirm the plate number:');
-  if (result) {
-    document.getElementById('search-plate').value = result.toUpperCase();
-    clearResult();
-  }
-  closeOCR();
-}
-
-// ---- GOOGLE SHEETS INTEGRATION (v2 — FIXED) ----
-// ⚠️  Paste your Web App deployment URL here after deploying Code.gs
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycby9rvNAkYhs7sILtZapEtXJTP9D4eqOqRlCI-xTDdm0Uszro8VC12vUtTneFklmyfzJ/exec';
-
-// FIX: searchPlate already uses GET — no change needed there.
 async function searchFromServer(plate) {
-  if (!SHEET_URL || SHEET_URL.startsWith('PASTE_')) return null;
+  if (!SHEET_URL || SHEET_URL.includes('YOUR_GOOGLE')) return null;
   try {
     const res = await fetch(`${SHEET_URL}?action=searchPlate&plate=${encodeURIComponent(plate)}`);
     return await res.json();
   } catch { return null; }
 }
 
-// FIX: Use GET instead of POST + no-cors.
-// no-cors makes the response opaque — we can never read it or catch errors.
-// GET requests to Apps Script are fully CORS-readable.
 async function sendExitToGoogleSheets(entry) {
-  if (!SHEET_URL || SHEET_URL.startsWith('PASTE_')) {
-    document.getElementById('sync-status').textContent = 'URL not configured';
-    return false;
+  if (!SHEET_URL || SHEET_URL.includes('YOUR_GOOGLE')) {
+    document.getElementById('sync-status').textContent = 'Saved locally (no server)';
+    return;
   }
-
   document.getElementById('sync-status').textContent = 'Syncing...';
   try {
-    const payload = encodeURIComponent(JSON.stringify(entry));
-    const url     = `${SHEET_URL}?action=updateExit&payload=${payload}`;
-    const res     = await fetch(url);
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    const json = await res.json();
-
-    if (json.status === 'ok') {
-      document.getElementById('sync-status').textContent = 'Synced ✓';
-      setTimeout(() => document.getElementById('sync-status').textContent = 'Ready', 3000);
-      return true;
-    } else {
-      throw new Error(json.message || 'Unknown server error');
-    }
-  } catch (err) {
-    console.error('Sheets sync failed:', err);
-    document.getElementById('sync-status').textContent = 'Sync failed — saved locally';
-    return false;
+    await fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'updateExit', data: entry })
+    });
+    document.getElementById('sync-status').textContent = 'Synced ✓';
+    setTimeout(() => document.getElementById('sync-status').textContent = 'Ready', 3000);
+  } catch {
+    document.getElementById('sync-status').textContent = 'Offline — saved locally';
   }
 }
 
 async function pingServer() {
-  if (!SHEET_URL || SHEET_URL.startsWith('PASTE_')) return;
+  if (!SHEET_URL || SHEET_URL.includes('YOUR_GOOGLE')) return;
   try {
     const res = await fetch(SHEET_URL + '?action=ping');
     const json = await res.json();
@@ -1656,225 +1628,218 @@ async function pingServer() {
     document.getElementById('sync-status').textContent = 'Server unreachable';
   }
 }
-pingServer();
 
-// ============================================================
-// MODE TOGGLE — AUTO vs MANUAL BULK
-// ============================================================
-let currentMode = 'auto';
+// ---- BULK MODE LOGIC ----
 
-function setMode(mode) {
-  currentMode = mode;
-  const autoSec = document.getElementById('auto-section');
-  const bulkPanel = document.getElementById('bulk-panel');
-  const btnAuto = document.getElementById('btn-mode-auto');
-  const btnManual = document.getElementById('btn-mode-manual');
-  const actionLogExit = document.getElementById('btn-logout');
-
-  if (mode === 'auto') {
-    autoSec.style.display = '';
-    bulkPanel.classList.remove('show');
-    btnAuto.classList.add('active');
-    btnManual.classList.remove('active');
-    actionLogExit.style.display = '';
+// ---- NEW UI LOGIC ----
+function formatTimeInput(input) {
+  let v = input.value.replace(/\D/g, '');
+  if (v.length > 4) v = v.slice(0,4);
+  if (v.length >= 3) {
+    input.value = v.slice(0,2) + ':' + v.slice(2,4);
   } else {
-    autoSec.style.display = 'none';
-    bulkPanel.classList.add('show');
-    btnAuto.classList.remove('active');
-    btnManual.classList.add('active');
-    actionLogExit.style.display = 'none';
-    // Ensure at least 3 rows
-    const list = document.getElementById('bulk-plate-list');
-    if (list.children.length === 0) {
-      addBulkRow(); addBulkRow(); addBulkRow();
-    }
-    updateBulkSummary();
+    input.value = v;
   }
 }
 
-// ---- FILL ALL ROWS WITH CURRENT TIME ----
-function getNowHHMM() {
-  const now = new Date();
-  return `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+function setMode(mode) {
+  document.getElementById('btn-auto-nav').classList.toggle('active', mode === 'auto');
+  document.getElementById('btn-bulk-nav').classList.toggle('active', mode === 'bulk');
+  
+  if(mode === 'auto') {
+    document.getElementById('auto-section').style.display = 'block';
+    document.getElementById('bulk-section').classList.remove('show');
+    document.getElementById('search-plate').focus();
+    setTimeout(() => { document.getElementById('search-plate').focus(); }, 50);
+  } else {
+    document.getElementById('auto-section').style.display = 'none';
+    document.getElementById('bulk-section').classList.add('show');
+    if (document.querySelectorAll('.bulk-row-new').length === 0) {
+      addBulkRow();
+    }
+  }
 }
 
-function fillAllNow() {
-  const t = getNowHHMM();
-  document.querySelectorAll('.bulk-row-time').forEach(el => { if (!el.disabled) el.value = t; });
-}
-
-// Keep backward compat
-function useNowTime() { fillAllNow(); }
-
-// ---- ADD A PLATE ROW ----
-let bulkRowId = 0;
+let bulkRowCount = 0;
 function addBulkRow() {
-  const list = document.getElementById('bulk-plate-list');
-  const id = ++bulkRowId;
-  const rowNum = list.children.length + 1;
-  const nowVal = getNowHHMM();
-
-  const row = document.createElement('div');
-  row.className = 'bulk-plate-row';
-  row.id = `bulk-row-${id}`;
-  row.innerHTML = `
-    <span class="bulk-row-num">${rowNum}</span>
-    <input type="text" class="bulk-plate-field" id="bulk-plate-${id}"
-      placeholder="B 1234 XX" maxlength="12" autocomplete="off" spellcheck="false"
-      oninput="this.value=this.value.toUpperCase().replace(/\s+/g,''); checkBulkPlate(${id})"
-      onkeydown="if(event.key==='Enter'){addBulkRow();setTimeout(()=>document.getElementById('bulk-plate-${id+1}')?.focus(),50)}">
-    <input type="time" class="bulk-row-time" id="bulk-time-${id}" value="${nowVal}" step="60" title="Jam keluar kendaraan ini">
-    <span class="bulk-plate-status" id="bulk-status-${id}">—</span>
-    <button class="btn-remove-row" onclick="removeBulkRow(${id})" title="Hapus">✕</button>
+  bulkRowCount++;
+  const div = document.createElement('div');
+  div.className = 'bulk-row-new';
+  div.id = 'bulk-row-' + bulkRowCount;
+  div.innerHTML = `
+    <div class="bulk-row-index">${bulkRowCount}</div>
+    <input type="text" class="bulk-input-new plate-val" placeholder="B 1234 XX" oninput="this.value=this.value.toUpperCase().replace(/\\s+/g, ''); countReady();">
+    <input type="text" class="bulk-time-new time-val" placeholder="HH:MM" maxlength="5" oninput="formatTimeInput(this); countReady();">
+    <button class="btn-dash"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    <button class="btn-delete-row" onclick="removeBulkRow('${div.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
   `;
-  list.appendChild(row);
-  updateBulkSummary();
-  return id;
+  document.getElementById('bulk-rows').appendChild(div);
+  updateBulkCount();
 }
 
 function removeBulkRow(id) {
-  const row = document.getElementById(`bulk-row-${id}`);
-  if (row) row.remove();
-  // Re-number
-  document.querySelectorAll('.bulk-row-num').forEach((el, i) => { el.textContent = i + 1; });
-  updateBulkSummary();
+  document.getElementById(id).remove();
+  let counter = 1;
+  document.querySelectorAll('.bulk-row-index').forEach(el => { el.textContent = counter++; });
+  bulkRowCount = counter - 1;
+  updateBulkCount();
+  countReady();
 }
 
-// ---- CHECK PLATE AGAINST ALL DAYS (not just today) ----
-function checkBulkPlate(id) {
-  const val = document.getElementById(`bulk-plate-${id}`)?.value.trim().toUpperCase();
-  const statusEl = document.getElementById(`bulk-status-${id}`);
-  if (!statusEl) return;
+function updateBulkCount() {
+  const rows = document.querySelectorAll('.bulk-row-new').length;
+  document.getElementById('bulk-total').textContent = rows;
+}
 
-  if (!val || val.length < 3) {
-    statusEl.textContent = '—';
-    statusEl.className = 'bulk-plate-status';
-    updateBulkSummary();
+function countReady() {
+  let ready = 0;
+  document.querySelectorAll('.bulk-row-new').forEach(row => {
+    let p = row.querySelector('.plate-val').value.trim();
+    let t = row.querySelector('.time-val').value;
+    if (p && t) ready++;
+  });
+  document.getElementById('bulk-ready').textContent = ready;
+}
+
+function fillAllTimesNow() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const timeStr = `${h}:${m}`;
+  document.querySelectorAll('.time-val').forEach(input => {
+    input.value = timeStr;
+  });
+  countReady();
+}
+
+setTimeout(() => {
+  setMode('auto');
+}, 50);
+
+// function toggleBulkMode (overwritten)
+
+function toggleBulkMode_DISABLED() {
+  document.getElementById('bulk-section').classList.toggle('show');
+}
+
+async function submitBulkExit() {
+  const rows = document.querySelectorAll('.bulk-row-new');
+  const validExits = [];
+  const logs = getLogs();
+
+  const now = new Date();
+  // Ensure month and day are padded
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const dateStr = `${now.getFullYear()}-${m}-${d}`;
+
+  for (let row of rows) {
+    const plateInput = row.querySelector('.plate-val').value.trim().toUpperCase();
+    let timeInput = row.querySelector('.time-val').value;
+
+    if (!plateInput || !timeInput) continue;
+
+    // Append seconds if user's browser didn't supply them
+    if (timeInput.split(':').length === 2) {
+      timeInput += ':00';
+    }
+
+    const timeOutMatch = `${dateStr}T${timeInput}`;
+
+    let recordMatch = activeEntriesCache.find(e => String(e.plate).toUpperCase() === plateInput);
+    if (!recordMatch) {
+      recordMatch = logs.find(e => e.plate === plateInput && !e.timeOut);
+    }
+
+    if (recordMatch) {
+      if (!recordMatch.fullTimeIn) recordMatch.fullTimeIn = new Date().toISOString();
+      const inTime = parseFullTimestamp(recordMatch.fullTimeIn);
+      const outTime = new Date(timeOutMatch);
+
+      // Auto-forward outTime by 1 day if apparently earlier (cross-midnight fix)
+      if (outTime < inTime) {
+        outTime.setDate(outTime.getDate() + 1);
+      }
+      
+      // Secondary safety check
+      if (outTime < inTime) {
+        showToastError(`Plat ${plateInput} - Waktu keluar (${outTime.toISOString()}) lebih awal dari masuk (${inTime.toISOString()})`);
+        return; 
+      }
+
+      const diffMs = Math.max(0, outTime - inTime);
+      const customDuration = (diffMs / 3600000).toFixed(1) + ' Jam';
+
+      validExits.push({
+        ...recordMatch,
+        timeOut: timeInput,
+        fullTimeOut: outTime.toISOString(),
+        duration: customDuration,
+        rowDOM: row 
+      });
+    } else {
+      showToastError(`Kendaraan aktif tidak ditemukan untuk plat: ${plateInput}`);
+      return; 
+    }
+  }
+
+  if (validExits.length === 0) {
+    showToastError("Mohon lengkapi minimal 1 plat dan waktunya.");
     return;
   }
 
-  // Search across all days
-  const found = findActiveEntry(val);
-  if (found) {
-    statusEl.textContent = '✓ FOUND';
-    statusEl.className = 'bulk-plate-status found';
-  } else {
-    // Check if already out
-    let alreadyOut = false;
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (!k || !k.startsWith('gate_log_')) continue;
-      try {
-        const logs = JSON.parse(localStorage.getItem(k) || '[]');
-        if (logs.find(e => e.plate === val && e.timeOut)) { alreadyOut = true; break; }
-      } catch {}
+  document.getElementById('sync-status').textContent = 'Processing Bulk Exits...';
+  
+  let exitLogs = getExitLogs();
+
+  for (let ex of validExits) {
+    let idx = logs.findIndex(e => e.id === ex.id);
+    if (idx !== -1) {
+      logs[idx].timeOut = ex.timeOut;
+      logs[idx].fullTimeOut = ex.fullTimeOut;
+      logs[idx].duration = ex.duration;
     }
-    statusEl.textContent = alreadyOut ? 'SUDAH OUT' : '✗ TIDAK ADA';
-    statusEl.className = 'bulk-plate-status ' + (alreadyOut ? 'logged' : 'not-found');
-  }
-  updateBulkSummary();
-}
+    
+    // Copy for log insertion without DOM node
+    const safeEx = { ...ex };
+    delete safeEx.rowDOM;
+    exitLogs.push(safeEx);
 
-// ---- UPDATE SUMMARY COUNT ----
-function updateBulkSummary() {
-  const rows = document.querySelectorAll('.bulk-plate-row');
-  const found = document.querySelectorAll('.bulk-plate-status.found').length;
-  const notFound = document.querySelectorAll('.bulk-plate-status.not-found').length;
-  const el = document.getElementById('bulk-summary');
-  el.innerHTML = `Total baris: <span>${rows.length}</span> &nbsp;|&nbsp; Siap diproses: <span>${found}</span> &nbsp;|&nbsp; Tidak ditemukan: <span style="color:var(--red)">${notFound}</span>`;
-}
-
-// ---- SUBMIT BULK EXIT ----
-async function submitBulk() {
-  const rows = document.querySelectorAll('.bulk-plate-row');
-  let successCount = 0;
-  let skipCount    = 0;
-  let missingTime  = 0;
-
-  const exitLogs = getExitLogs();
-
-  for (const row of rows) {
-    const id       = row.id.replace('bulk-row-', '');
-    const plateEl  = document.getElementById(`bulk-plate-${id}`);
-    const timeEl   = document.getElementById(`bulk-time-${id}`);
-    const statusEl = document.getElementById(`bulk-status-${id}`);
-    if (!plateEl || plateEl.disabled) continue;
-
-    const plate = plateEl.value.trim().toUpperCase();
-    if (!plate) continue;
-
-    // Validate time field
-    const timeVal = timeEl ? timeEl.value : '';
-    if (!timeVal) {
-      missingTime++;
-      if (statusEl) { statusEl.textContent = '! JAM?'; statusEl.className = 'bulk-plate-status not-found'; }
-      continue;
-    }
-
-    // Build exit timestamp — handle overnight (outDate before entry → add 1 day)
-    const [hh, mm] = timeVal.split(':');
-    const now = new Date();
-    let outDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(hh), parseInt(mm), 0, 0);
-    const timeOut    = `${hh}:${mm}:00`;
-    const fullTimeOut = outDate.toISOString();
-
-    // Find active entry across ALL days
-    const found = findActiveEntry(plate);
-    if (!found) {
-      skipCount++;
-      if (statusEl) { statusEl.textContent = '✗ TIDAK ADA'; statusEl.className = 'bulk-plate-status not-found'; }
-      continue;
-    }
-
-    const { entry, storageKey } = found;
-
-    // Fix duration if exit time is before entry time (overnight shift)
-    let computedFullTimeOut = fullTimeOut;
-    const inTime = parseFullTimestamp(entry.fullTimeIn);
-    if (inTime && outDate < inTime) {
-      outDate = new Date(outDate.getTime() + 24 * 3600000);
-      computedFullTimeOut = outDate.toISOString();
-    }
-
-    const duration = calcDuration(entry.fullTimeIn, computedFullTimeOut);
-
-    // Update entry in its original storage key
-    const updated = updateEntryInStorage(storageKey, entry.id, {
-      timeOut, fullTimeOut: computedFullTimeOut, duration
-    });
-
-    const exitEntry = { ...entry, timeOut, fullTimeOut: computedFullTimeOut, duration };
-    exitLogs.push(exitEntry);
-    sendExitToGoogleSheets(exitEntry);
-
-    if (statusEl) { statusEl.textContent = '✓ LOGGED'; statusEl.className = 'bulk-plate-status logged'; }
-    if (plateEl)  { plateEl.disabled = true; }
-    if (timeEl)   { timeEl.disabled  = true; }
-
-    successCount++;
+    if (activeEntriesCache) activeEntriesCache = activeEntriesCache.filter(e => e.id !== ex.id);
+    
+    ex.rowDOM.querySelector('.plate-val').value = '';
+    ex.rowDOM.querySelector('.time-val').value = '';
   }
 
+  saveLogs(logs);
   saveExitLogs(exitLogs);
+
   renderExitLog();
+  toggleBulkMode();
+  showToast(`Bulk Update Sukses: ${validExits.length} Kendaraan Logged Out`);
 
-  if (missingTime  > 0) showToastError(`${missingTime} baris tidak ada jam keluar — dilewati`);
-  if (successCount > 0) showToast(`✓ ${successCount} kendaraan berhasil di-log OUT`);
-  if (skipCount    > 0) setTimeout(() => showToastError(`${skipCount} plat tidak ditemukan — dilewati`), 1500);
+  // Map without rowDOM to prevent JSON stringify cyclic/DOM errors
+  const sendReqs = validExits.map(ex => {
+    const p = { ...ex };
+    delete p.rowDOM;
+    return sendExitToGoogleSheets(p);
+  });
+  
+  await Promise.all(sendReqs);
+  document.getElementById('sync-status').textContent = 'Bulk sync complete ✓';
+}
 
-  // After 2s clear logged rows
-  setTimeout(() => {
-    document.querySelectorAll('.bulk-plate-status.logged').forEach(el => {
-      const rowId = el.id.replace('bulk-status-', '');
-      const pEl = document.getElementById(`bulk-plate-${rowId}`);
-      const tEl = document.getElementById(`bulk-time-${rowId}`);
-      if (pEl) { pEl.value = ''; pEl.disabled = false; }
-      if (tEl) { tEl.value = getNowHHMM(); tEl.disabled = false; }
-      el.textContent = '—';
-      el.className = 'bulk-plate-status';
+pingServer();
+preloadActiveEntries();
+// ---- PWA SERVICE WORKER ----
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      console.log('SW registered: ', reg.scope);
+    }).catch(err => {
+      console.log('SW registration failed: ', err);
     });
-    document.querySelectorAll('.bulk-row-num').forEach((el, i) => { el.textContent = i + 1; });
-    updateBulkSummary();
-  }, 2000);
+  });
 }
 </script>
 </body>
