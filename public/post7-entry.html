@@ -5,6 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>POST 7 — VEHICLE ENTRY</title>
+  <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
@@ -1041,6 +1042,18 @@
       localStorage.setItem('gate_vehicle_cache', JSON.stringify(systemVehicleCache));
     }
 
+    let activeEntriesCache = [];
+    async function preloadActiveEntries() {
+      if (!SHEET_URL) return;
+      try {
+        const res = await fetch(`${SHEET_URL}?action=getActiveEntries`);
+        const json = await res.json();
+        if (json.status === 'ok') activeEntriesCache = json.entries.map(e => e.plate.toUpperCase());
+      } catch {}
+    }
+    preloadActiveEntries();
+    setInterval(preloadActiveEntries, 60000); // refresh every minute
+
     function autofillVehicle(plateStr) {
       if (!plateStr || plateStr.length < 3) return;
       const cached = systemVehicleCache[plateStr];
@@ -1159,24 +1172,23 @@
       if (!destEl) return showToast('Select destination', true);
       if (!shipments) return showToast('Select shipment status', true);
 
-      document.getElementById('sync-status').textContent = 'Checking status...';
       const btn = document.querySelector('.btn-primary');
       if (btn) btn.disabled = true;
 
-      try {
-        const res = await fetch(`${SHEET_URL}?action=searchPlate&plate=${encodeURIComponent(plate)}`);
-        const json = await res.json();
-        if (json.status === 'found') {
-          showToast(`Gagal: Kendaraan ${plate} belum keluar dari Post 1!`, true);
-          if (btn) btn.disabled = false;
-          document.getElementById('sync-status').textContent = 'Ready for Entry';
-          return;
-        }
-      } catch (e) {
-        console.warn('Offline: skipping duplicate check');
+      // Instant Duplicate Validation via Cache + Local Activity
+      if (activeEntriesCache.includes(plate.toUpperCase())) {
+        showToast(`Gagal: Kendaraan ${plate} belum keluar dari Post 1!`, true);
+        if (btn) btn.disabled = false;
+        return;
       }
-
-      if (btn) btn.disabled = false;
+      // Also check local logs just in case cache is delayed by 1 min
+      const recentLocal = getLogs().find(e => e.plate.toUpperCase() === plate.toUpperCase());
+      if (recentLocal && (Date.now() - recentLocal.id < 8 * 3600 * 1000) && !recentLocal.timeOut) {
+        // Locally marked as entered recently
+        showToast(`Gagal: Kendaraan ${plate} baru saja masuk dari Post 7.`, true);
+        if (btn) btn.disabled = false;
+        return;
+      }
 
       const entry = {
         id: Date.now(),
@@ -1242,7 +1254,24 @@
         document.getElementById('sync-status').textContent = 'Saved Locally';
       }
     }
-  </script>
+
+    // --- PWA SERVICE WORKER ---
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+          console.log('SW registered: ', reg.scope);
+        }).catch(err => {
+          console.log('SW registration failed: ', err);
+        });
+      });
+    }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+</script>
 </body>
 
 </html>

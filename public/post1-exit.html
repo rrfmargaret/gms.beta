@@ -1843,7 +1843,7 @@ async function submitBulkExit() {
   saveExitLogs(exitLogs);
 
   renderExitLog();
-  toggleBulkMode();
+  setMode('auto');
   showToast(`Bulk Update Sukses: ${validExits.length} Kendaraan Logged Out`);
 
   // Map without rowDOM to prevent JSON stringify cyclic/DOM errors
@@ -1868,11 +1868,6 @@ if ('serviceWorker' in navigator) {
       console.log('SW registration failed: ', err);
     });
   });
-}
-
-// ---- SERVICE WORKER & PWA INSTALL ----
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
 }
 
 let deferredPrompt;
