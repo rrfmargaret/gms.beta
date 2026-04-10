@@ -1393,7 +1393,6 @@ async function searchVehicle() {
   // 1. Instant Cache Search
   const cachedMatch = activeEntriesCache.find(e => String(e.plate).toUpperCase() === query);
   if (cachedMatch) {
-    if (!cachedMatch.fullTimeIn) cachedMatch.fullTimeIn = new Date().toISOString();
     populateCard(cachedMatch);
     document.getElementById('sync-status').textContent = 'Found instantly';
     return;
@@ -1415,7 +1414,6 @@ async function searchVehicle() {
   if (serverResult) {
     if (serverResult.status === 'found') {
       const record = serverResult.record;
-      if (!record.fullTimeIn) record.fullTimeIn = new Date().toISOString();
       populateCard(record);
       document.getElementById('sync-status').textContent = 'Found on server';
       return;
@@ -1436,8 +1434,24 @@ function showNotFound(msg) {
   document.getElementById('not-found').classList.add('show');
 }
 
+function ensureFullTimeIn(record) {
+  if (record.fullTimeIn) return record;
+  if (record.timeIn) {
+    const now = new Date();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const dateStr = `${now.getFullYear()}-${m}-${d}`;
+    let tIn = record.timeIn.split(':').length === 2 ? record.timeIn + ':00' : record.timeIn;
+    const inTime = new Date(`${dateStr}T${tIn}`);
+    record.fullTimeIn = inTime.toISOString();
+  } else {
+    record.fullTimeIn = new Date().toISOString();
+  }
+  return record;
+}
+
 function populateCard(record) {
-  currentRecord = record;
+  currentRecord = ensureFullTimeIn(record);
   document.getElementById('r-plate').textContent = record.plate;
   document.getElementById('r-timein').textContent = record.timeIn;
   document.getElementById('r-date').textContent = record.date;
@@ -1780,7 +1794,7 @@ async function submitBulkExit() {
     }
 
     if (recordMatch) {
-      if (!recordMatch.fullTimeIn) recordMatch.fullTimeIn = new Date().toISOString();
+      recordMatch = ensureFullTimeIn(recordMatch);
       const inTime = parseFullTimestamp(recordMatch.fullTimeIn);
       const outTime = new Date(timeOutMatch);
 

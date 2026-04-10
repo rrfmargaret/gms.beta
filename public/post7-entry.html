@@ -1031,7 +1031,8 @@
     })();
 
     function saveVehicleCache(entry) {
-      systemVehicleCache[entry.plate] = {
+      const cleanPlate = String(entry.plate).toUpperCase().replace(/\s+/g, '');
+      systemVehicleCache[cleanPlate] = {
         driver: entry.driver,
         company: entry.company,
         simtype: entry.simtype,
@@ -1048,15 +1049,25 @@
       try {
         const res = await fetch(`${SHEET_URL}?action=getActiveEntries`);
         const json = await res.json();
-        if (json.status === 'ok') activeEntriesCache = json.entries.map(e => e.plate.toUpperCase());
+        if (json.status === 'ok') {
+          activeEntriesCache = json.entries.map(e => String(e.plate).toUpperCase().replace(/\s+/g, ''));
+        }
       } catch {}
     }
     preloadActiveEntries();
     setInterval(preloadActiveEntries, 60000); // refresh every minute
 
     function autofillVehicle(plateStr) {
-      if (!plateStr || plateStr.length < 3) return;
-      const cached = systemVehicleCache[plateStr];
+      const cleanInput = String(plateStr).toUpperCase().replace(/\s+/g, '');
+      if (!cleanInput || cleanInput.length < 3) return;
+      
+      let cached = systemVehicleCache[cleanInput];
+      if (!cached) {
+        // Fallback for older cache entries with spaces
+        const matchingKey = Object.keys(systemVehicleCache).find(k => String(k).toUpperCase().replace(/\s+/g, '') === cleanInput);
+        if (matchingKey) cached = systemVehicleCache[matchingKey];
+      }
+
       if (cached) {
         if (!document.getElementById('driver').value) document.getElementById('driver').value = cached.driver;
         if (!document.getElementById('company').value) document.getElementById('company').value = cached.company;
@@ -1176,16 +1187,17 @@
       if (btn) btn.disabled = true;
 
       // Instant Duplicate Validation via Cache + Local Activity
-      if (activeEntriesCache.includes(plate.toUpperCase())) {
+      const cleanPlate = plate.toUpperCase().replace(/\s+/g, '');
+      if (activeEntriesCache.includes(cleanPlate)) {
         showToast(`Gagal: Kendaraan ${plate} belum keluar dari Post 1!`, true);
         if (btn) btn.disabled = false;
         return;
       }
-      // Also check local logs just in case cache is delayed by 1 min
-      const recentLocal = getLogs().find(e => e.plate.toUpperCase() === plate.toUpperCase());
-      if (recentLocal && (Date.now() - recentLocal.id < 8 * 3600 * 1000) && !recentLocal.timeOut) {
-        // Locally marked as entered recently
-        showToast(`Gagal: Kendaraan ${plate} baru saja masuk dari Post 7.`, true);
+      
+      // Also check local logs just in case cache is delayed by 1 min (prevent double-clicks within 2 mins)
+      const recentLocal = getLogs().find(e => String(e.plate).toUpperCase().replace(/\s+/g, '') === cleanPlate);
+      if (recentLocal && (Date.now() - recentLocal.id < 2 * 60 * 1000)) {
+        showToast(`Gagal: Kendaraan ${plate} baru saja masuk (Tunggu 2 menit jika ini entry baru).`, true);
         if (btn) btn.disabled = false;
         return;
       }
@@ -1194,6 +1206,7 @@
         id: Date.now(),
         date: new Date().toLocaleDateString('id-ID'),
         timeIn: getTimestamp(),
+        fullTimeIn: new Date().toISOString(),
         plate, driver, company, simtype: simEl.value,
         ktp, driverCard, vtype: vtypeEl.value, dest: destEl.value,
         annotations, approver, shipments, products, details,
