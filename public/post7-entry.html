@@ -878,6 +878,8 @@
             <label for="vt-fuso" class="chip-label">Fuso Box</label>
             <input type="radio" name="vtype" id="vt-iso" value="Isotank" class="chip-input">
             <label for="vt-iso" class="chip-label">Isotank</label>
+            <input type="radio" name="vtype" id="vt-pickup" value="Pickup" class="chip-input">
+            <label for="vt-pickup" class="chip-label">Pickup</label>
           </div>
         </div>
 
@@ -1069,19 +1071,17 @@
       }
 
       if (cached) {
-        if (!document.getElementById('driver').value) document.getElementById('driver').value = cached.driver;
-        if (!document.getElementById('company').value) document.getElementById('company').value = cached.company;
-        if (!document.getElementById('ktp').value) document.getElementById('ktp').value = cached.ktp;
-        if (!document.getElementById('driver-card').value) document.getElementById('driver-card').value = cached.driverCard;
+        if (cached.driver) document.getElementById('driver').value = cached.driver;
+        if (cached.company) document.getElementById('company').value = cached.company;
+        if (cached.ktp) document.getElementById('ktp').value = cached.ktp;
+        if (cached.driverCard) document.getElementById('driver-card').value = cached.driverCard;
         
-        const currentSim = document.querySelector('input[name="simtype"]:checked');
-        if (!currentSim && cached.simtype) {
+        if (cached.simtype) {
            const sc = Array.from(document.querySelectorAll('input[name="simtype"]')).find(el => el.value === cached.simtype);
            if (sc) sc.checked = true;
         }
 
-        const currentVtype = document.querySelector('input[name="vtype"]:checked');
-        if (!currentVtype && cached.vtype) {
+        if (cached.vtype) {
            const vc = Array.from(document.querySelectorAll('input[name="vtype"]')).find(el => el.value === cached.vtype);
            if (vc) vc.checked = true;
         }
